@@ -9,21 +9,26 @@ orbs:
   gcp-gcr: circleci/gcp-gcr@0.8.0
 
 jobs:
-  build_result_image:
+  build_app_image:
+    parameters:
+      app:
+        type: string
     executor: gcp-gcr/default
     steps:
       - checkout
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           docker-context: result
-          path: result
-          image: voting/result
+          path: << parameters.app >>
+          image: voting/<< parameters.app >>
       - gcp-gcr/push-image:
           digest-path: /tmp/digest.txt
-          image: voting/result
+          image: voting/<< parameters.app >>
 
 workflows:
-  build_result_image:
+  build_app_image:
     when: << pipeline.parameters.trigger_build_result_image >>
     jobs:
-      - build_result_image
+      - build_result_image:
+          app: << pipeline.parameters.app >>
+
