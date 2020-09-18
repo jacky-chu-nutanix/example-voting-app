@@ -15,8 +15,9 @@ jobs:
       - checkout
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
-          image: voting-result
+          docker-context: result
           path: result
+          image: voting-result
       - gcp-gcr/push-image:
           digest-path: /tmp/digest.txt
           image: voting-result
