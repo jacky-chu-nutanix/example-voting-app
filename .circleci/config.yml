@@ -4,16 +4,15 @@ parameters:
   trigger_build_result_image:
     type: boolean
     default: false
+  app_name:
+    type: string
+    default: << pipeline.parameters.app_name >>
 
 orbs:
   gcp-gcr: circleci/gcp-gcr@0.8.0
 
 jobs:
   build_app_image:
-    parameters:
-      app:
-        type: string
-        default: << pipeline.parameters.app >>
     executor: gcp-gcr/default
     steps:
       - checkout
@@ -28,7 +27,7 @@ jobs:
 
 workflows:
   build_app_image:
-    when: << pipeline.parameters.trigger_build_result_image >>
+    when: << pipeline.parameters.trigger_build_app_image >>
     jobs:
       - build_app_image
 
