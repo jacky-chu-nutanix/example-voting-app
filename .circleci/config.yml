@@ -1,0 +1,31 @@
+version: 2.1
+
+parameters:
+  build_result:
+    type: boolean
+    default: false
+
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.8.0
+
+jobs:
+  build_result_image:
+    executor: gcp-gcr/default
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          image: voting-result
+          path: result
+      - gcp-gcr/push-image:
+          digest-path: /tmp/digest.txt
+          image: voting-result
+      - run:
+          command: |
+            echo "Digest is: $(</tmp/digest.txt)"
+
+workflows:
+  build_result:
+    when: << pipeline.parameters.build_result >>
+    jobs:
+      - build_result_image
