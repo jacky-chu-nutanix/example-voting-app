@@ -55,6 +55,14 @@ jobs:
           image_tag: $CIRCLE_TAG
 
 workflows:
+  commit:
+    jobs:
+      - build_all_images:
+          filters:
+            branches:
+              only:
+                - master
+                
   build_app_image:
     when: << pipeline.parameters.trigger_build_app_image >>
     jobs:
