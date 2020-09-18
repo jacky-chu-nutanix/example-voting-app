@@ -46,6 +46,18 @@ jobs:
       - gcp-gcr/gcr-auth
       - build-n-push-image:
           app_name: vote
+      - build-n-push-image:
+          app_name: result
+      - build-n-push-image:
+          app_name: worker
+
+  build_all_images_with_tag:
+    executor: gcp-gcr/default
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
+      - build-n-push-image:
+          app_name: vote
           image_tag: $CIRCLE_TAG
       - build-n-push-image:
           app_name: result
@@ -55,6 +67,14 @@ jobs:
           image_tag: $CIRCLE_TAG
 
 workflows:
+  commit:
+    jobs:
+      - build_all_images:
+          filters:
+            branches:
+              only:
+                - master
+
   build_app_image:
     when: << pipeline.parameters.trigger_build_app_image >>
     jobs:
@@ -62,7 +82,7 @@ workflows:
 
   rc_release:
     jobs:
-      - build_all_images:
+      - build_all_images_with_tag:
           filters:
             branches:
               only:
@@ -70,4 +90,3 @@ workflows:
             tags:
               only:
                 - /^.+-v[0-9]+\.[0-9]+\.[0-9]+-rc[0-9]+$/
-
