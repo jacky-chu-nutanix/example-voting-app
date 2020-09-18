@@ -18,7 +18,7 @@ jobs:
       - checkout
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
-          docker-context: result
+          docker-context: << pipeline.parameters.app_name >>
           path: << pipeline.parameters.app_name >>
           image: voting/<< pipeline.parameters.app_name >>
       - gcp-gcr/push-image:
