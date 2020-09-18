@@ -1,7 +1,7 @@
 version: 2.1
 
 parameters:
-  trigger_build_result_image:
+  trigger_build_app_image:
     type: boolean
     default: false
   app_name:
