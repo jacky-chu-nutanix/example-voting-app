@@ -16,5 +16,5 @@ spec:
         app: worker
     spec:
       containers:
-      - image: gcr.io/nutanix-epoch-dev/voting/worket:latest
+      - image: gcr.io/nutanix-epoch-dev/voting/worker:latest
         name: worker
