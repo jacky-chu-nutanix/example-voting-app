@@ -6,7 +6,7 @@ parameters:
     default: false
   app_name:
     type: string
-    default: << pipeline.parameters.app_name >>
+    default: ""
 
 orbs:
   gcp-gcr: circleci/gcp-gcr@0.8.0
@@ -19,11 +19,11 @@ jobs:
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           docker-context: result
-          path: << parameters.app >>
-          image: voting/<< parameters.app >>
+          path: << pipeline.parameters.app_name >>
+          image: voting/<< pipeline.parameters.app_name >>
       - gcp-gcr/push-image:
           digest-path: /tmp/digest.txt
-          image: voting/<< parameters.app >>
+          image: voting/<< pipeline.parameters.app_name >>
 
 workflows:
   build_app_image:
