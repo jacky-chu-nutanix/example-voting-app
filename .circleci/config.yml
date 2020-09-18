@@ -13,6 +13,7 @@ jobs:
     parameters:
       app:
         type: string
+        default: << pipeline.parameters.app >>
     executor: gcp-gcr/default
     steps:
       - checkout
@@ -29,6 +30,5 @@ workflows:
   build_app_image:
     when: << pipeline.parameters.trigger_build_result_image >>
     jobs:
-      - build_result_image:
-          app: << pipeline.parameters.app >>
+      - build_app_image
 
