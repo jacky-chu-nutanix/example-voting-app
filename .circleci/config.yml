@@ -51,7 +51,7 @@ jobs:
       - build-n-push-image:
           app_name: worker
 
-build_all_images_with_tag:
+  build_all_images_with_tag:
     executor: gcp-gcr/default
     steps:
       - checkout
