@@ -11,23 +11,60 @@ parameters:
 orbs:
   gcp-gcr: circleci/gcp-gcr@0.8.0
 
+commands:
+  build-n-push-image:
+    parameters:
+      app_name:
+        type: string
+      image_tag:
+        type: string
+        default: latest
+    steps:
+      - gcp-gcr/build-image:
+          docker-context: << parameters.app_name >>
+          path: << parameters.app_name >>
+          image: voting/<< parameters.app_name >>
+          tag: << parameters.image_tag >>
+      - gcp-gcr/push-image:
+          digest-path: /tmp/digest.txt
+          image: voting/<< parameters.app_name >>
+          tag: << parameters.image_tag >>
+
 jobs:
   build_app_image:
     executor: gcp-gcr/default
     steps:
       - checkout
       - gcp-gcr/gcr-auth
-      - gcp-gcr/build-image:
-          docker-context: << pipeline.parameters.app_name >>
-          path: << pipeline.parameters.app_name >>
-          image: voting/<< pipeline.parameters.app_name >>
-      - gcp-gcr/push-image:
-          digest-path: /tmp/digest.txt
-          image: voting/<< pipeline.parameters.app_name >>
+      - build-n-push-image:
+          app_name: << pipeline.parameters.app_name >>
+
+  build_all_images:
+    executor: gcp-gcr/default
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
+      - build-n-push-image:
+          app_name: vote
+          image_tag: $CIRCLE_TAG
+      - build-n-push-image:
+          app_name: result
+          image_tag: $CIRCLE_TAG
+      - build-n-push-image:
+          app_name: worker
+          image_tag: $CIRCLE_TAG
 
 workflows:
   build_app_image:
     when: << pipeline.parameters.trigger_build_app_image >>
     jobs:
       - build_app_image
+
+  rc_release:
+    jobs:
+      - build_all_images:
+          filters:
+            tags:
+              only:
+                - /^.+-v[0-9]+\.[0-9]+\.[0-9]+-rc[0-9]+$/
 
