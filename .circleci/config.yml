@@ -64,6 +64,9 @@ workflows:
     jobs:
       - build_all_images:
           filters:
+            branches:
+              only:
+                - staging
             tags:
               only:
                 - /^.+-v[0-9]+\.[0-9]+\.[0-9]+-rc[0-9]+$/
