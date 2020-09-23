@@ -46,10 +46,13 @@ jobs:
       - gcp-gcr/gcr-auth
       - build-n-push-image:
           app_name: vote
+          image_tag: ${CIRCLE_SHA1:0:7}
       - build-n-push-image:
           app_name: result
+          image_tag: ${CIRCLE_SHA1:0:7}
       - build-n-push-image:
           app_name: worker
+          image_tag: ${CIRCLE_SHA1:0:7}
 
   build_all_images_with_tag:
     executor: gcp-gcr/default
